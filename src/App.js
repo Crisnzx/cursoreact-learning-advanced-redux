@@ -35,7 +35,6 @@ function App() {
         }
       );
       if (!response.ok) {
-        console.log(response);
         throw new Error(`Error ${response.status} ${response.statusText}`);
       }
       return response;
@@ -66,9 +65,11 @@ function App() {
           })
         );
       });
+
     let timer = setTimeout(() => {
       dispatch(UIActions.hideNotification());
     }, 2000);
+
     return () => {
       clearTimeout(timer);
     };
@@ -109,7 +110,8 @@ export default App;
   The second approach is using useEffect in any place of our app (in this case I did it in the App component), 
   basically all we have to do is sending the http request when the cart data is changed. 
   So the data will be formatted correctly and after that the request will be done.
+  But even then we have a lot of code in the component!
 
-
+  The third approach is using Action Creators
 
 */
