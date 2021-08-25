@@ -5,8 +5,11 @@ import Notification from './components/UI/Notification';
 import { useSelector, useDispatch } from 'react-redux';
 import { useEffect } from 'react';
 import { UIActions } from './store/UI-slice';
+import { sendCartData } from './store/cart-actions';
+import { fetchCartData } from './store/cart-actions';
 
 let firstRender = true;
+let secondRender = false;
 
 function App() {
   const dispatch = useDispatch();
@@ -15,56 +18,22 @@ function App() {
   const notification = useSelector(state => state.UI.notification);
 
   useEffect(() => {
-    async function sendCartData() {
-      dispatch(
-        UIActions.showNotification({
-          message: 'Please wait',
-          title: 'Sending...',
-          status: 'sending',
-        })
-      );
+    dispatch(fetchCartData());
+  }, []);
 
-      const response = await fetch(
-        'https://food-order-a04c2-default-rtdb.firebaseio.com/cart.json',
-        {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(cartItems),
-        }
-      );
-      if (!response.ok) {
-        throw new Error(`Error ${response.status} ${response.statusText}`);
-      }
-      return response;
-    }
-
+  useEffect(() => {
     if (firstRender) {
       firstRender = false;
+      secondRender = true;
       return;
     }
-    sendCartData()
-      .then(res => {
-        console.log(res);
-        dispatch(
-          UIActions.showNotification({
-            status: 'success',
-            title: 'Item added to the cart!',
-            message: res.statusText,
-          })
-        );
-      })
-      .catch(err => {
-        console.log(err);
-        dispatch(
-          UIActions.showNotification({
-            status: 'error',
-            title: 'Something went wrong!',
-            message: err.message,
-          })
-        );
-      });
+
+    if (secondRender) {
+      secondRender = false;
+      return;
+    }
+
+    dispatch(sendCartData(cartItems));
 
     let timer = setTimeout(() => {
       dispatch(UIActions.hideNotification());

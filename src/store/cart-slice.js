@@ -1,5 +1,6 @@
 import { createSlice, current } from '@reduxjs/toolkit';
 // current is good for debugging, because it'll not return Proxies
+import { UIActions } from './UI-slice';
 
 const initialCartState = {
   items: [
@@ -23,6 +24,10 @@ const cartSlice = createSlice({
   name: 'cartContent',
   initialState: initialCartState,
   reducers: {
+    setCartData(state, action) {
+      state.cartItems = action.payload;
+    },
+
     addItemToCart(state, action) {
       const id = action.payload;
       const cartItemAdded = state.items.find(item => item.id === id);
